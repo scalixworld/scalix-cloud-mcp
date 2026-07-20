@@ -1,5 +1,9 @@
 # Scalix World — MCP Server
 
+[![Install in VS Code](https://img.shields.io/badge/VS_Code-Install_Scalix_MCP-0098FF?logo=githubcopilot&logoColor=white)](https://vscode.dev/redirect/mcp/install?name=scalix&config=%7B%22type%22%3A%20%22http%22%2C%20%22url%22%3A%20%22https%3A%2F%2Fapi.scalix.world%2Fv1%2Fmcp%22%2C%20%22headers%22%3A%20%7B%22Authorization%22%3A%20%22Bearer%20%24%7BSCALIX_API_KEY%7D%22%7D%7D)
+[![Install in VS Code Insiders](https://img.shields.io/badge/VS_Code_Insiders-Install-24bfa5?logo=githubcopilot&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=scalix&config=%7B%22type%22%3A%20%22http%22%2C%20%22url%22%3A%20%22https%3A%2F%2Fapi.scalix.world%2Fv1%2Fmcp%22%2C%20%22headers%22%3A%20%7B%22Authorization%22%3A%20%22Bearer%20%24%7BSCALIX_API_KEY%7D%22%7D%7D&quality=insiders)
+
+
 The official [Model Context Protocol](https://modelcontextprotocol.io) server for
 [Scalix World](https://scalix.world/?utm_source=github&utm_medium=repo&utm_campaign=scalix-mcp),
 the AI-native neocloud. One hosted MCP server lets an agent operate the entire
