@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "scalix": {
+      "type": "http",
+      "url": "https://api.scalix.world/v1/mcp",
+      "headers": {
+        "Authorization": "Bearer ${SCALIX_API_KEY}"
+      }
+    }
+  }
+}
