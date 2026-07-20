@@ -9,6 +9,18 @@ The official [Model Context Protocol](https://modelcontextprotocol.io) server fo
 the AI-native neocloud. One hosted MCP server lets an agent operate the entire
 platform — no local install.
 
+## Antigravity (Google)
+
+Install as a plugin (recommended — one command):
+
+```bash
+git clone https://github.com/scalixworld/scalix-mcp ~/.gemini/config/plugins/scalix
+```
+
+Then open the plugin's `mcp_config.json` and replace `YOUR_SCALIX_API_KEY` with a key from [scalix.world](https://scalix.world) (Console → API Keys). Antigravity auto-discovers plugins in `~/.gemini/config/plugins/` (global) or `.agents/plugins/` (per-workspace).
+
+Or add the server directly: paste the `mcpServers` block from `mcp_config.json` into `~/.gemini/config/mcp_config.json` (Antigravity 2.0 / IDE) — or in Antigravity CLI type `/mcp` for the interactive manager. Note Antigravity uses `serverUrl` (not `url`).
+
 ## Connect
 
 ```
