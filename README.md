@@ -5,7 +5,7 @@
 
 
 The official [Model Context Protocol](https://modelcontextprotocol.io) server for
-[Scalix World](https://scalix.world/?utm_source=github&utm_medium=repo&utm_campaign=scalix-mcp),
+[Scalix World](https://scalix.world/?utm_source=github&utm_medium=repo&utm_campaign=scalix-cloud-mcp),
 the AI-native neocloud. One hosted MCP server lets an agent operate the entire
 platform — no local install.
 
@@ -14,7 +14,7 @@ platform — no local install.
 Install as a plugin (recommended — one command):
 
 ```bash
-git clone https://github.com/scalixworld/scalix-mcp ~/.gemini/config/plugins/scalix
+git clone https://github.com/scalixworld/scalix-cloud-mcp ~/.gemini/config/plugins/scalix
 ```
 
 Then open the plugin's `mcp_config.json` and replace `YOUR_SCALIX_API_KEY` with a key from [scalix.world](https://scalix.world) (Console → API Keys). Antigravity auto-discovers plugins in `~/.gemini/config/plugins/` (global) or `.agents/plugins/` (per-workspace).
