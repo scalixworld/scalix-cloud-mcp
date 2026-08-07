@@ -7,7 +7,8 @@
 The official [Model Context Protocol](https://modelcontextprotocol.io) server for
 [Scalix World](https://scalix.world/?utm_source=github&utm_medium=repo&utm_campaign=scalix-cloud-mcp),
 the AI-native neocloud. One hosted MCP server lets an agent operate the entire
-platform — no local install.
+platform — no local install. Database, compute, functions, storage, auth, AI, DNS
+and billing: 55 tools across 18 domains, one API key.
 
 ## Antigravity (Google)
 
