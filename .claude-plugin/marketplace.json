@@ -1,0 +1,16 @@
+{
+  "name": "scalix",
+  "description": "Official Scalix World plugin marketplace — operate Scalix Cloud from Claude over one remote MCP endpoint.",
+  "owner": {
+    "name": "Scalix World",
+    "url": "https://scalix.world"
+  },
+  "plugins": [
+    {
+      "name": "scalix",
+      "source": ".",
+      "description": "Operate Scalix Cloud from Claude — 55 platform tools over one remote MCP endpoint (databases, AI inference, functions, compute, storage, KV, auth, billing), plus skills for provisioning ScalixNova Postgres, deploying serverless functions, and running AI inference.",
+      "category": "deployment"
+    }
+  ]
+}
