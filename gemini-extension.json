@@ -1,0 +1,13 @@
+{
+  "name": "scalix-cloud-mcp",
+  "version": "0.1.0",
+  "mcpServers": {
+    "scalix": {
+      "httpUrl": "https://api.scalix.world/v1/mcp",
+      "headers": {
+        "Authorization": "Bearer $SCALIX_API_KEY"
+      }
+    }
+  },
+  "contextFileName": "GEMINI.md"
+}

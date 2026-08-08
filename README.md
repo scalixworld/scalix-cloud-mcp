@@ -33,6 +33,14 @@ Then open the plugin's `mcp_config.json` and replace `YOUR_SCALIX_API_KEY` with 
 
 Or add the server directly: paste the `mcpServers` block from `mcp_config.json` into `~/.gemini/config/mcp_config.json` (Antigravity 2.0 / IDE) — or in Antigravity CLI type `/mcp` for the interactive manager. Note Antigravity uses `serverUrl` (not `url`).
 
+## Gemini CLI
+
+```bash
+gemini extensions install https://github.com/scalixworld/scalix-cloud-mcp
+```
+
+Set `SCALIX_API_KEY` in your environment; the extension config and `GEMINI.md` context load automatically.
+
 ## Connect
 
 ```
