@@ -10,6 +10,17 @@ the AI-native neocloud. One hosted MCP server lets an agent operate the entire
 platform — no local install. Database, compute, functions, storage, auth, AI, DNS
 and billing: 55 tools across 18 domains, one API key.
 
+## Claude Code plugin (recommended)
+
+Install the full package — 55 tools, 4 skills and a `/scalix:setup` command:
+
+```bash
+claude plugin marketplace add scalixworld/scalix-cloud-mcp
+claude plugin install scalix@scalix
+```
+
+Then run `/scalix:setup` inside Claude Code to connect and verify.
+
 ## Antigravity (Google)
 
 Install as a plugin (recommended — one command):

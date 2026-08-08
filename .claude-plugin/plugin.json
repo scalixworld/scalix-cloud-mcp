@@ -1,0 +1,25 @@
+{
+  "name": "scalix",
+  "description": "Operate Scalix Cloud from Claude — 55 platform tools over one remote MCP endpoint (databases, AI inference, functions, compute, storage, KV, auth, billing), plus skills for provisioning ScalixNova Postgres, deploying serverless functions, and running AI inference.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Scalix World",
+    "url": "https://scalix.world"
+  },
+  "homepage": "https://docs.scalix.world/mcp",
+  "repository": "https://github.com/scalixworld/scalix-cloud-mcp",
+  "license": "MIT",
+  "keywords": [
+    "scalix",
+    "cloud",
+    "mcp",
+    "postgres",
+    "database",
+    "serverless",
+    "functions",
+    "ai-inference",
+    "storage",
+    "deployment",
+    "sovereign-cloud"
+  ]
+}
