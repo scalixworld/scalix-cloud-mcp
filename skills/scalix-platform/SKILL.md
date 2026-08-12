@@ -1,6 +1,6 @@
 ---
 name: scalix-platform
-description: Connect to and operate Scalix Cloud — authentication, the remote MCP endpoint (55 platform tools), the plain-HTTP tool surface, and the CLI. Use when the user wants to set up Scalix, connect an agent or MCP client to Scalix Cloud, list available platform tools, or asks how Scalix auth and API keys work.
+description: Connect to and operate Scalix Cloud — authentication, the remote MCP endpoint (50 platform tools), the plain-HTTP tool surface, and the CLI. Use when the user wants to set up Scalix, connect an agent or MCP client to Scalix Cloud, list available platform tools, or asks how Scalix auth and API keys work.
 ---
 
 # Operate Scalix Cloud
@@ -17,13 +17,13 @@ export SCALIX_API_KEY=scalix_at_...
 
 All API calls use `Authorization: Bearer $SCALIX_API_KEY`. Never print, log, or commit the key. If a call returns `401`, the key is missing or invalid — ask the user to check the env var before debugging anything else.
 
-## MCP: 55 platform tools
+## MCP: 50 platform tools
 
 This plugin ships the MCP server config (`.mcp.json`), pointing at the hosted endpoint:
 
 - **Endpoint**: `https://api.scalix.world/v1/mcp` (JSON-RPC 2.0 over HTTP)
 - **Discovery is open, actions are authenticated**: `initialize`, `tools/list`, and `resources/list` work without credentials; `tools/call` requires the Bearer key.
-- 55 tools across database, storage, functions, compute, computers, KV, events, cron, domains, builds, auth, search, and more. Every tool call runs with the permissions, metering, and audit trail of the API key that makes it.
+- 50 tools across database, storage, functions, compute, computers, KV, events, cron, domains, builds, auth, search, and more. Every tool call runs with the permissions, metering, and audit trail of the API key that makes it.
 
 Prefer the MCP tools for platform operations (provisioning, deploys, listing resources) — they are the same control plane as the console.
 
@@ -45,7 +45,7 @@ For a credential-free connectivity check, use the open MCP discovery instead:
 ```bash
 curl -X POST https://api.scalix.world/v1/mcp \
   -H "Content-Type: application/json" \
-  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'        # 55 tools, no auth
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'        # 50 tools, no auth
 ```
 
 ## CLI
