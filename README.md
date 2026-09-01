@@ -8,11 +8,11 @@ The official [Model Context Protocol](https://modelcontextprotocol.io) server fo
 [Scalix World](https://scalix.world/?utm_source=github&utm_medium=repo&utm_campaign=scalix-cloud-mcp),
 the AI-native neocloud. One hosted MCP server lets an agent operate the entire
 platform — no local install. Database, compute, functions, storage, auth, AI, DNS
-and billing: 50 tools across 17 domains, one API key.
+and billing: 53 tools across 17 domains, one API key.
 
 ## Claude Code plugin (recommended)
 
-Install the full package — 50 tools, 4 skills and a `/scalix:setup` command:
+Install the full package — 53 tools, 4 skills and a `/scalix:setup` command:
 
 ```bash
 claude plugin marketplace add scalixworld/scalix-cloud-mcp
