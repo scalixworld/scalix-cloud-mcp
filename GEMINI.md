@@ -2,7 +2,7 @@
 
 Scalix Cloud is the agent-native cloud: PostgreSQL databases, containers, functions,
 AI, object storage, auth, DNS and persistent Linux machines behind one MCP endpoint —
-50 tools, one API key.
+53 tools, one API key.
 
 - Endpoint: `https://api.scalix.world/v1/mcp` (Streamable HTTP)
 - Discovery (`initialize`, `tools/list`, `resources/list`) needs no auth — browse the
