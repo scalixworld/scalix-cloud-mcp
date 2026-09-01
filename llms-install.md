@@ -53,7 +53,7 @@ the URL above and the Authorization header.
 
 ## What you get
 
-50 tools covering the Scalix World platform: run queries and migrations against
+53 tools covering the Scalix World platform: run queries and migrations against
 Postgres-compatible databases, create and drop database branches, deploy services and
 functions in isolated microVMs, manage object storage, read logs and status, and check
 usage and billing. One API key authorizes all of it. Consequential actions pause for
