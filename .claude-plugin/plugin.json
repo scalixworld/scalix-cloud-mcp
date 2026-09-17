@@ -1,7 +1,7 @@
 {
-  "name": "scalix",
-  "description": "Operate Scalix Cloud from Claude — 53 platform tools over one remote MCP endpoint (databases, AI inference, functions, compute, storage, KV, auth, billing), plus skills for provisioning ScalixNova Postgres, deploying serverless functions, and running AI inference.",
-  "version": "0.1.0",
+  "name": "scalix-cloud",
+  "description": "Operate Scalix Cloud from Claude — 50 platform tools over one remote MCP endpoint (databases, AI inference, functions, computers, storage, KV, auth, billing), plus skills for provisioning ScalixNova Postgres, deploying serverless functions, and running AI inference.",
+  "version": "1.4.2",
   "author": {
     "name": "Scalix World",
     "url": "https://scalix.world"

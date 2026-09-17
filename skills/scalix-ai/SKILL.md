@@ -35,8 +35,8 @@ The prompt is positional; the model is passed with `--model`.
 
 ## Models
 
-`scalix-lumio-lite` is the low-latency chat model and the safe default for examples. For the current model list and capabilities (tool use, vision), consult https://docs.scalix.world/ai?utm_source=claude-plugin&utm_medium=skill rather than assuming — the lineup evolves.
+`scalix-lumio-lite` is the low-latency chat model and the safe default for examples. For the current model list and capabilities (tool use, vision), consult https://docs.scalix.world/ai rather than assuming — the lineup evolves.
 
 Scalix Lumio models are Scalix products; describe them by their Scalix names and documented capabilities only. Do not speculate about their internals or what technology sits behind them.
 
-Full reference: https://docs.scalix.world/ai?utm_source=claude-plugin&utm_medium=skill
+Full reference: https://docs.scalix.world/ai

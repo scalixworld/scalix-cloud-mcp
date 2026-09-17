@@ -42,4 +42,4 @@ scalix-cloud fn delete <function-id>
 
 The same operations exist over REST (`POST https://api.scalix.world/v1/functions`) and as MCP tools — prefer MCP tools when this plugin's server is connected.
 
-Full reference: https://docs.scalix.world/functions?utm_source=claude-plugin&utm_medium=skill
+Full reference: https://docs.scalix.world/functions

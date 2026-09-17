@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  push:
+    branches: [main, 'ci/**']
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: scalix-cloud-mcp-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  manifests:
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: [self-hosted, Linux, X64, scalix-ci]
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Validate JSON manifests
+        run: |
+          python3 - <<'EOF'
+          import json, sys
+          required_ok = {
+              'plugin.json': lambda d: bool(d.get('name')) and bool(d.get('description')),
+              '.claude-plugin/plugin.json': lambda d: bool(d.get('name')),
+              '.claude-plugin/marketplace.json': lambda d: bool(d),
+              'mcp_config.json': lambda d: 'mcpServers' in d,
+              '.mcp.json': lambda d: 'mcpServers' in d,
+              'gemini-extension.json': lambda d: bool(d),
+              'glama.json': lambda d: bool(d),
+          }
+          failed = []
+          for path, check in required_ok.items():
+              try:
+                  data = json.load(open(path))
+              except Exception as e:
+                  failed.append(f'{path}: unparseable ({e})')
+                  continue
+              if not check(data):
+                  failed.append(f'{path}: missing required fields')
+          if failed:
+              print('\n'.join(failed))
+              raise SystemExit(1)
+          print(f'All {len(required_ok)} manifests valid')
+          EOF
+
+      - name: Validate MCP endpoint config
+        run: |
+          python3 - <<'EOF'
+          import json
+          mcp = json.load(open('.mcp.json'))['mcpServers']['scalix']
+          assert mcp['url'].startswith('https://'), 'MCP endpoint must be HTTPS'
+          assert '${SCALIX_API_KEY}' in mcp['headers']['Authorization'], 'API key must come from env'
+          print('MCP endpoint config OK:', mcp['url'])
+          EOF
+
+      - name: Validate skill references
+        run: |
+          for d in skills/*/; do
+            test -f "${d}SKILL.md" || { echo "MISSING: ${d}SKILL.md"; exit 1; }
+          done
+          echo "All skill directories carry SKILL.md"

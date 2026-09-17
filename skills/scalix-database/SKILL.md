@@ -51,4 +51,4 @@ curl -X POST https://api.scalix.world/api/v1/sql \
 
 Use parameterised queries (`$1` + `--params`) for anything with user input — never interpolate values into SQL strings.
 
-Full reference: https://docs.scalix.world/database?utm_source=claude-plugin&utm_medium=skill
+Full reference: https://docs.scalix.world/database
