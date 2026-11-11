@@ -1,4 +1,18 @@
 {
-  "name": "scalix",
-  "description": "Scalix Cloud — agent-operable cloud platform: database, AI, functions, containers, storage and auth over one remote MCP endpoint with 51 tools."
+  "name": "scalix-cloud",
+  "version": "1.4.2",
+  "description": "Scalix Cloud MCP integration — 53 platform tools over one remote endpoint (PostgreSQL, serverless functions, AI inference, computers, containers, object storage, auth, billing).",
+  "author": "Scalix World",
+  "skills": [
+    "skills/"
+  ],
+  "mcpServers": {
+    "scalix": {
+      "type": "http",
+      "url": "https://api.scalix.world/v1/mcp",
+      "headers": {
+        "Authorization": "Bearer ${SCALIX_API_KEY}"
+      }
+    }
+  }
 }

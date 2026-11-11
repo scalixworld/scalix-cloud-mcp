@@ -23,7 +23,7 @@ This plugin ships the MCP server config (`.mcp.json`), pointing at the hosted en
 
 - **Endpoint**: `https://api.scalix.world/v1/mcp` (JSON-RPC 2.0 over HTTP)
 - **Discovery is open, actions are authenticated**: `initialize`, `tools/list`, and `resources/list` work without credentials; `tools/call` requires the Bearer key.
-- 51 tools across 17 domains: database, computers, Scalix Run services, storage, functions, KV, domains, AI, events, builds, projects, cron, sandboxes, auth, search, usage, and status. Every tool call runs with the permissions, metering, and audit trail of the API key that makes it.
+- 53 tools across 16 families, measured live (`db 9 · computer 9 · storage 6 · run 5 · crew 3 · domain 3 · fn 3 · kv 3 · ai 2 · build 2 · events 2 · project 2 · auth 1 · cron 1 · sandbox 1 · status 1`). Counts move with deploy gates: `scalix_search` and `scalix_usage` are withheld when their flags are off, and the computer/crew families appear only when `SCALIX_COMPUTERS_ENABLED` / `SCALIX_CREW_ENABLED` are on. Do not quote a fixed number in public material — measure it with `tools/list` (the org repo's `ops/tools/registry-health.py` guards the registry description against the live count). Every tool call runs with the permissions, metering, and audit trail of the API key that makes it.
 
 Prefer the MCP tools for platform operations (provisioning, deploys, listing resources) — they are the same control plane as the console.
 
@@ -45,7 +45,7 @@ For a credential-free connectivity check, use the open MCP discovery instead:
 ```bash
 curl -X POST https://api.scalix.world/v1/mcp \
   -H "Content-Type: application/json" \
-  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'        # 51 tools, no auth
+  -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'        # 53 tools, no auth (measure; gates move it)
 ```
 
 ## CLI

@@ -1,85 +1,105 @@
-# Scalix World — MCP Server
+# Scalix Cloud — Unified MCP Plugin
 
-[![Install in VS Code](https://img.shields.io/badge/VS_Code-Install_Scalix_MCP-0098FF?logo=githubcopilot&logoColor=white)](https://vscode.dev/redirect/mcp/install?name=scalix&config=%7B%22type%22%3A%20%22http%22%2C%20%22url%22%3A%20%22https%3A%2F%2Fapi.scalix.world%2Fv1%2Fmcp%22%2C%20%22headers%22%3A%20%7B%22Authorization%22%3A%20%22Bearer%20%24%7BSCALIX_API_KEY%7D%22%7D%7D)
-[![Install in VS Code Insiders](https://img.shields.io/badge/VS_Code_Insiders-Install-24bfa5?logo=githubcopilot&logoColor=white)](https://insiders.vscode.dev/redirect/mcp/install?name=scalix&config=%7B%22type%22%3A%20%22http%22%2C%20%22url%22%3A%20%22https%3A%2F%2Fapi.scalix.world%2Fv1%2Fmcp%22%2C%20%22headers%22%3A%20%7B%22Authorization%22%3A%20%22Bearer%20%24%7BSCALIX_API_KEY%7D%22%7D%7D&quality=insiders)
+Official Model Context Protocol (MCP) plugin and server configuration for [Scalix Cloud](https://scalix.world) — the agent-native cloud platform providing PostgreSQL databases, serverless functions, AI inference, persistent Linux machines (Computers), containers (Run), object storage, auth, and billing behind a single remote MCP endpoint (`https://api.scalix.world/v1/mcp`).
 
+---
 
-The official [Model Context Protocol](https://modelcontextprotocol.io) server for
-[Scalix World](https://scalix.world/?utm_source=github&utm_medium=repo&utm_campaign=scalix-cloud-mcp),
-the AI-native neocloud. One hosted MCP server lets an agent operate the entire
-platform — no local install. Database, compute, functions, storage, auth, AI, DNS
-and billing: 51 tools across 17 domains, one API key.
+## Supported Ecosystems (One Repo, Many Manifests)
 
-## Claude Code plugin (recommended)
+This repository includes native manifests for all major coding agents and MCP clients:
 
-Install the full package — 51 tools, 4 skills and a `/scalix:setup` command:
+- **DeepSeek Harness (DSH)** — via `cordis.patch.yml` and `@scalix-world/scalix-cloud-mcp` npm bundle
+- **Claude Code** — via `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json`
+- **Google Antigravity** — via root `plugin.json`
+- **Gemini CLI** — via GitHub URL extension install
+- **Cursor / Windsurf / Codex** — via `.mcp.json` / generic Streamable HTTP configuration
+
+---
+
+## Quick Start by Client
+
+### 1. DeepSeek Harness (DSH)
 
 ```bash
+# Add the Scalix plugin bundle to your DSH profile
+dsh plugin --profile web add @scalix-world/scalix-cloud-mcp
+
+# Set your API key
+export SCALIX_API_KEY="scalix_at_..."
+
+# Boot DeepSeek Harness
+dsh --profile web
+```
+
+### 2. Claude Code
+
+```bash
+# Add from official marketplace
 claude plugin marketplace add scalixworld/scalix-cloud-mcp
-claude plugin install scalix@scalix
+claude plugin install scalix-cloud@scalixworld
+
+# Set your API key
+export SCALIX_API_KEY="scalix_at_..."
 ```
 
-Then run `/scalix:setup` inside Claude Code to connect and verify.
-
-## Antigravity (Google)
-
-Install as a plugin (recommended — one command):
-
-```bash
-git clone https://github.com/scalixworld/scalix-cloud-mcp ~/.gemini/config/plugins/scalix
-```
-
-Then open the plugin's `mcp_config.json` and replace `YOUR_SCALIX_API_KEY` with a key from [scalix.world](https://scalix.world) (Console → API Keys). Antigravity auto-discovers plugins in `~/.gemini/config/plugins/` (global) or `.agents/plugins/` (per-workspace).
-
-Or add the server directly: paste the `mcpServers` block from `mcp_config.json` into `~/.gemini/config/mcp_config.json` (Antigravity 2.0 / IDE) — or in Antigravity CLI type `/mcp` for the interactive manager. Note Antigravity uses `serverUrl` (not `url`).
-
-## Gemini CLI
+### 3. Gemini CLI
 
 ```bash
 gemini extensions install https://github.com/scalixworld/scalix-cloud-mcp
+export SCALIX_API_KEY="scalix_at_..."
 ```
 
-Set `SCALIX_API_KEY` in your environment; the extension config and `GEMINI.md` context load automatically.
+### 4. Cursor / Windsurf / Generic MCP (`.mcp.json`)
 
-## Connect
-
-```
-https://api.scalix.world/v1/mcp
-```
-
-Authenticate with a Scalix World API key (`Authorization: Bearer <key>`), scopable
-to specific services, projects, and actions. Listed in the official MCP registry as
-[`world.scalix/cloud`](https://registry.modelcontextprotocol.io/v0/servers?search=world.scalix).
-
-Example (Claude Code):
-
-```bash
-claude mcp add --transport http scalix https://api.scalix.world/v1/mcp \
-  --header "Authorization: Bearer $SCALIX_API_KEY"
+```json
+{
+  "mcpServers": {
+    "scalix": {
+      "transport": "streamable-http",
+      "url": "https://api.scalix.world/v1/mcp",
+      "headers": {
+        "Authorization": "Bearer ${SCALIX_API_KEY}"
+      }
+    }
+  }
+}
 ```
 
-## What an agent can do with it
+---
 
-- **Databases** — provision Postgres-compatible databases with scale-to-zero;
-  create copy-on-write branches to test migrations, then promote or drop them
-- **Compute** — deploy container services and serverless functions in isolated microVMs
-- **Storage, Auth, DNS, Email** — manage the production primitives around the app
-- **AI inference** — run AI workloads with routing, metering, and spend controls
-- **Observability & billing** — read logs and metrics, check usage and remaining
-  credits; the agent can make cost-aware decisions with the same key it deploys with
+## What You Get
 
-Consequential actions (deletes, production changes, spend past budget caps) pause
-for human approval — guardrails are a platform feature, not a wrapper script.
+### 1. 53 Platform Tools Across 17 Domains
 
-## Docs
+All tools are exposed under the `scalix_*` namespace (or `mcp__scalix__*` in DSH):
 
-- MCP guide: https://docs.scalix.world/mcp
-- API reference: https://docs.scalix.world/api-reference/mcp
-- Start free (no card): https://scalix.world
+| Domain               | Key Tools                                                                            |
+| -------------------- | ------------------------------------------------------------------------------------ |
+| **Databases**        | `scalix_db_query`, `scalix_db_schema`, `scalix_db_optimize`, `scalix_db_text_to_sql` |
+| **Containers (Run)** | `scalix_run_deploy`, `scalix_run_list`, `scalix_build_create`                        |
+| **Computers**        | `scalix_computer_create`, `scalix_computer_exec`, `scalix_computer_delete`           |
+| **Functions**        | `scalix_fn_deploy`, `scalix_fn_invoke`, `scalix_fn_list`                             |
+| **AI Inference**     | `scalix_ai_infer`, `scalix_ai_models`                                                |
+| **Storage & KV**     | `scalix_storage_create_bucket`, `scalix_storage_upload`, `scalix_kv_set`             |
+| **System**           | `scalix_status`, `scalix_usage`, `scalix_project_list`                               |
 
-## About
+### 2. Built-in Agent Skills (`skills/`)
 
-Scalix World is a fully managed cloud platform engineered as one system — database,
-AI, compute, storage, auth, billing — operable by humans through a console and by
-agents through this MCP server, on sovereign European infrastructure. Built by
-[Scalix](https://scalix.world).
+- **`scalix-platform`** — Architecture overview, authentication, and SDK usage
+- **`scalix-database`** — ScalixNova Postgres 16/17/18, database branching, and PITR
+- **`scalix-functions`** — Node & Python serverless function deployment
+- **`scalix-ai`** — Lumio model family and OpenAI-compatible inference
+
+---
+
+## Authentication
+
+1. Generate an API Key in the [Scalix Cloud Console](https://console.scalix.world).
+2. Set `SCALIX_API_KEY=scalix_at_...` in your environment.
+3. Tool discovery is open and unauthenticated; tool execution requires a valid Bearer token.
+
+---
+
+## License
+
+MIT — Copyright (c) 2026 Scalix World Pvt Ltd. See [LICENSE](LICENSE).
