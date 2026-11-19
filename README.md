@@ -8,30 +8,17 @@ Official Model Context Protocol (MCP) plugin and server configuration for [Scali
 
 This repository includes native manifests for all major coding agents and MCP clients:
 
-- **DeepSeek Harness (DSH)** — via `cordis.patch.yml` and `@scalix-world/scalix-cloud-mcp` npm bundle
 - **Claude Code** — via `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json`
+- **Cursor / Windsurf / Codex** — via `.mcp.json` / generic Streamable HTTP configuration
 - **Google Antigravity** — via root `plugin.json`
 - **Gemini CLI** — via GitHub URL extension install
-- **Cursor / Windsurf / Codex** — via `.mcp.json` / generic Streamable HTTP configuration
+- **DeepSeek Harness (DSH)** — via `cordis.patch.yml` and `@scalix-world/scalix-cloud-mcp` npm bundle
 
 ---
 
 ## Quick Start by Client
 
-### 1. DeepSeek Harness (DSH)
-
-```bash
-# Add the Scalix plugin bundle to your DSH profile
-dsh plugin --profile web add @scalix-world/scalix-cloud-mcp
-
-# Set your API key
-export SCALIX_API_KEY="scalix_at_..."
-
-# Boot DeepSeek Harness
-dsh --profile web
-```
-
-### 2. Claude Code
+### 1. Claude Code
 
 ```bash
 # Add from official marketplace
@@ -42,14 +29,7 @@ claude plugin install scalix-cloud@scalixworld
 export SCALIX_API_KEY="scalix_at_..."
 ```
 
-### 3. Gemini CLI
-
-```bash
-gemini extensions install https://github.com/scalixworld/scalix-cloud-mcp
-export SCALIX_API_KEY="scalix_at_..."
-```
-
-### 4. Cursor / Windsurf / Generic MCP (`.mcp.json`)
+### 2. Cursor / Windsurf / Codex / Generic MCP (`.mcp.json`)
 
 ```json
 {
@@ -63,6 +43,30 @@ export SCALIX_API_KEY="scalix_at_..."
     }
   }
 }
+```
+
+### 3. Google Antigravity
+
+Install using the root `plugin.json` manifest or point Antigravity at `https://api.scalix.world/v1/mcp` with `Authorization: Bearer ${SCALIX_API_KEY}`.
+
+### 4. Gemini CLI
+
+```bash
+gemini extensions install https://github.com/scalixworld/scalix-cloud-mcp
+export SCALIX_API_KEY="scalix_at_..."
+```
+
+### 5. DeepSeek Harness (DSH)
+
+```bash
+# Add the Scalix plugin bundle to your DSH profile
+dsh plugin --profile web add @scalix-world/scalix-cloud-mcp
+
+# Set your API key
+export SCALIX_API_KEY="scalix_at_..."
+
+# Boot DeepSeek Harness
+dsh --profile web
 ```
 
 ---
@@ -88,7 +92,7 @@ All tools are exposed under the `scalix_*` namespace (or `mcp__scalix__*` in DSH
 - **`scalix-platform`** — Architecture overview, authentication, and SDK usage
 - **`scalix-database`** — ScalixNova Postgres 16/17/18, database branching, and PITR
 - **`scalix-functions`** — Node & Python serverless function deployment
-- **`scalix-ai`** — Lumio model family and OpenAI-compatible inference
+- **`scalix-ai`** — Managed multi-vendor AI model catalog and OpenAI-compatible inference
 
 ---
 
@@ -102,4 +106,4 @@ All tools are exposed under the `scalix_*` namespace (or `mcp__scalix__*` in DSH
 
 ## License
 
-MIT — Copyright (c) 2026 Scalix World Pvt Ltd. See [LICENSE](LICENSE).
+Scalix Cloud is a proprietary, closed-source managed cloud platform by Scalix World Pvt Ltd (licensed internationally via Energy FW Ltd). This MCP plugin manifest and skills repository is open-sourced under the MIT License — Copyright (c) 2026 Scalix World Pvt Ltd. See [LICENSE](LICENSE).
