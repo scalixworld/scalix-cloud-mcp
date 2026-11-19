@@ -1,6 +1,6 @@
 ---
 name: scalix-functions
-description: Deploy and invoke serverless functions on Scalix Cloud — Node and Python runtimes, source or container-image deploys, invocation, and scaling behaviour. Use when the user wants to deploy a function, API endpoint, or webhook handler on Scalix, or asks about Scalix Functions runtimes and cold starts.
+description: Deploy and invoke serverless functions on Scalix Cloud across Node and Python runtimes, source or container-image deploys, invocation, and scaling behaviour. Use when the user wants to deploy a function, API endpoint, or webhook handler on Scalix, or asks about Scalix Functions runtimes and cold starts.
 ---
 
 # Scalix Functions

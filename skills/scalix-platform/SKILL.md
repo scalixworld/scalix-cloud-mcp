@@ -1,6 +1,6 @@
 ---
 name: scalix-platform
-description: Connect to and operate Scalix Cloud — authentication, the remote MCP endpoint (50 platform tools), the plain-HTTP tool surface, and the CLI. Use when the user wants to set up Scalix, connect an agent or MCP client to Scalix Cloud, list available platform tools, or asks how Scalix auth and API keys work.
+description: Connect to and operate Scalix Cloud through the remote MCP endpoint, the plain-HTTP tool surface, and the CLI. Use when the user wants to set up Scalix, connect an agent or MCP client to Scalix Cloud, list available platform tools, or asks how Scalix auth and API keys work.
 ---
 
 # Operate Scalix Cloud
@@ -17,7 +17,7 @@ export SCALIX_API_KEY=scalix_at_...
 
 All API calls use `Authorization: Bearer $SCALIX_API_KEY`. Never print, log, or commit the key. If a call returns `401`, the key is missing or invalid — ask the user to check the env var before debugging anything else.
 
-## MCP: 50 platform tools
+## MCP endpoint
 
 This plugin ships the MCP server config (`.mcp.json`), pointing at the hosted endpoint:
 
