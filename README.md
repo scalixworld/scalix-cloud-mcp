@@ -85,7 +85,7 @@ All tools are exposed under the `scalix_*` namespace (or `mcp__scalix__*` in DSH
 | **Functions**        | `scalix_fn_deploy`, `scalix_fn_invoke`, `scalix_fn_list`                             |
 | **AI Inference**     | `scalix_ai_infer`, `scalix_ai_models`                                                |
 | **Storage & KV**     | `scalix_storage_create_bucket`, `scalix_storage_upload`, `scalix_kv_set`             |
-| **System**           | `scalix_status`, `scalix_usage`, `scalix_project_list`                               |
+| **System**           | `scalix_status`, `scalix_project_list`, `scalix_search`                              |
 
 ### 2. Built-in Agent Skills (`skills/`)
 
