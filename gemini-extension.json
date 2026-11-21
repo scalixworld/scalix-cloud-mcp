@@ -1,6 +1,6 @@
 {
   "name": "scalix-cloud-mcp",
-  "version": "0.1.0",
+  "version": "1.6.1",
   "mcpServers": {
     "scalix": {
       "httpUrl": "https://api.scalix.world/v1/mcp",

@@ -1,6 +1,6 @@
 ---
 name: scalix-ai
-description: Run AI inference on Scalix Cloud through the OpenAI-compatible API: chat completions, streaming, embeddings, image generation, speech, transcription, RAG, and web research across the public multi-vendor Scalix AI model catalog. Use when the user wants LLM inference on Scalix, asks about Scalix AI or its model catalog, or wants to point existing OpenAI-compatible code at Scalix.
+description: "Run AI inference on Scalix Cloud through the OpenAI-compatible API: chat completions, streaming, embeddings, image generation, speech, transcription, RAG, and web research across the public multi-vendor Scalix AI model catalog. Use when the user wants LLM inference on Scalix, asks about Scalix AI or its model catalog, or wants to point existing OpenAI-compatible code at Scalix."
 ---
 
 # Scalix AI — inference through one endpoint

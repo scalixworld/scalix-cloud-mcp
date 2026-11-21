@@ -1,0 +1,15 @@
+- insert:
+    - id: mcp-scalix-cloud
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: scalix
+        transport: streamable-http
+        url: https://api.scalix.world/v1/mcp
+        headers:
+          Authorization: 'Bearer ${SCALIX_API_KEY}'
+        failOnStartupError: true
+        reconnect:
+          enabled: true
+          initialDelayMs: 1000
+          maxDelayMs: 30000
+          maxAttempts: 5

@@ -4,9 +4,13 @@ Scalix Cloud is a hosted, remote MCP server. There is nothing to download, build
 locally. Configuration is one URL and one API key.
 
 - Endpoint: `https://api.scalix.world/v1/mcp` (streamable HTTP)
-- Auth: `Authorization: Bearer <SCALIX_API_KEY>` header
+- Auth: OAuth 2.1 browser consent (recommended — clients follow the RFC 9728 `401` `WWW-Authenticate` challenge automatically) or `Authorization: Bearer <SCALIX_API_KEY>` header
 - Get a key: sign in at https://console.scalix.world and create an API key for your project
-- Discovery (`initialize`, `tools/list`) works without credentials; tool calls require the key
+- Metadata discovery: `GET https://api.scalix.world/.well-known/oauth-protected-resource` works without credentials; `/v1/mcp` requests require OAuth 2.1 or a Bearer API key
+
+## VS Code & GitHub Copilot (OAuth 2.1)
+
+Install `world.scalix/cloud` from the `@mcp` Extensions gallery or GitHub MCP Registry. On first tool use, VS Code opens `https://console.scalix.world/oauth/consent` in your browser — pick a project and click **Allow**. No manual API key configuration required.
 
 ## Claude Code
 
@@ -59,5 +63,4 @@ functions in isolated microVMs, manage object storage, read logs and status, and
 usage and billing. One API key authorizes all of it. Consequential actions pause for
 human approval.
 
-Troubleshooting: a `401` on tool calls means the key is missing or wrong (discovery still
-works unauthenticated by design). Keys are project-scoped; create them in the console.
+Troubleshooting: a `401` on `/v1/mcp` means no valid OAuth token or API key was supplied (use `GET https://api.scalix.world/.well-known/oauth-protected-resource` for credential-free discovery). Keys are project-scoped; create them in the console.

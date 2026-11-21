@@ -1,0 +1,32 @@
+{
+  "$schema": "https://antigravity.google/schemas/v1/plugin.json",
+  "name": "scalix-cloud",
+  "displayName": "Scalix Cloud",
+  "version": "1.6.1",
+  "description": "Operate Scalix Cloud — 53 platform tools over one remote MCP endpoint: PostgreSQL, AI inference, serverless functions, Linux machines, object storage, KV, DNS.",
+  "logo": "assets/logo.svg",
+  "suggestedPrompts": [
+    "Create a ScalixNova Postgres database and return its connection details",
+    "Deploy a container image to Scalix Run with a public HTTPS URL",
+    "List the AI models available on Scalix and run a test inference"
+  ],
+  "author": {
+    "name": "Scalix World",
+    "url": "https://scalix.world"
+  },
+  "homepage": "https://scalix.world/mcp",
+  "repository": "https://github.com/scalixworld/scalix-cloud-mcp",
+  "license": "MIT",
+  "keywords": [
+    "scalix",
+    "cloud",
+    "postgres",
+    "postgresql",
+    "database",
+    "serverless",
+    "functions",
+    "ai",
+    "storage",
+    "deployment"
+  ]
+}

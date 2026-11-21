@@ -1,6 +1,6 @@
 {
   "name": "scalix-cloud",
-  "version": "1.4.2",
+  "version": "1.6.1",
   "description": "Scalix Cloud MCP integration — 53 platform tools over one remote endpoint (PostgreSQL, serverless functions, AI inference, computers, containers, object storage, auth, billing).",
   "author": "Scalix World",
   "skills": [

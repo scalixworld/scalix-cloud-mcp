@@ -8,9 +8,10 @@ Official Model Context Protocol (MCP) plugin and server configuration for [Scali
 
 This repository includes native manifests for all major coding agents and MCP clients:
 
+- **VS Code & GitHub Copilot** — 1-click install from the GitHub MCP Registry (`world.scalix/cloud`) with native browser OAuth 2.1
 - **Claude Code** — via `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json`
 - **Cursor / Windsurf / Codex** — via `.mcp.json` / generic Streamable HTTP configuration
-- **Google Antigravity** — via root `plugin.json`
+- **Google Antigravity** — via `.antigravity-plugin/plugin.json` + `mcp_config.json` (MCP Store / Plugin Marketplace)
 - **Gemini CLI** — via GitHub URL extension install
 - **DeepSeek Harness (DSH)** — via `cordis.patch.yml` and `@scalix-world/scalix-cloud-mcp` npm bundle
 
@@ -18,18 +19,36 @@ This repository includes native manifests for all major coding agents and MCP cl
 
 ## Quick Start by Client
 
-### 1. Claude Code
+### 1. VS Code & GitHub Copilot (OAuth 2.1 — Recommended)
+
+1. Open **Extensions** in VS Code, search `@mcp Scalix Cloud` (or install from the GitHub MCP Registry `world.scalix/cloud`), and click **Install**.
+2. Start a chat in Copilot / Agent mode — VS Code will automatically open `https://console.scalix.world/oauth/consent` in your browser so you can pick a project and click **Allow**. No API key copy/paste or `${input:...}` configuration required.
+
+If configuring manually in `~/.copilot/mcp-config.json` or repo-root `.mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "scalix": {
+      "type": "http",
+      "url": "https://api.scalix.world/v1/mcp"
+    }
+  }
+}
+```
+
+### 2. Claude Code
 
 ```bash
 # Add from official marketplace
 claude plugin marketplace add scalixworld/scalix-cloud-mcp
 claude plugin install scalix-cloud@scalixworld
 
-# Set your API key
+# Authenticate via OAuth on connect, or export an API key for headless runs:
 export SCALIX_API_KEY="scalix_at_..."
 ```
 
-### 2. Cursor / Windsurf / Codex / Generic MCP (`.mcp.json`)
+### 3. Cursor / Windsurf / Codex / Generic MCP (`.mcp.json`)
 
 ```json
 {
@@ -45,18 +64,46 @@ export SCALIX_API_KEY="scalix_at_..."
 }
 ```
 
-### 3. Google Antigravity
+### 4. Google Antigravity
 
-Install using the root `plugin.json` manifest or point Antigravity at `https://api.scalix.world/v1/mcp` with `Authorization: Bearer ${SCALIX_API_KEY}`.
+Install as a plugin (recommended — bundles the MCP server plus the four `scalix-*` skills):
 
-### 4. Gemini CLI
+```bash
+# From the official Marketplace (once listed)
+agy plugin install scalix-cloud
+
+# Or straight from this repository / a local checkout
+agy plugin install https://github.com/scalixworld/scalix-cloud-mcp
+agy plugin install /path/to/scalix-cloud-mcp
+```
+
+On first connect, Antigravity opens `https://console.scalix.world/oauth/consent` in your browser — pick a project, click **Allow**, and the tools are live. No API key copy/paste. The bundled skills are invoked as `/scalix-platform`, `/scalix-database`, `/scalix-functions`, `/scalix-ai`.
+
+Manual / headless alternative — point Antigravity at the raw endpoint with an API key instead of OAuth:
+
+```json
+{
+  "mcpServers": {
+    "scalix": {
+      "serverUrl": "https://api.scalix.world/v1/mcp",
+      "headers": {
+        "Authorization": "Bearer ${SCALIX_API_KEY}"
+      }
+    }
+  }
+}
+```
+
+Edit this in Antigravity IDE via `…` → **MCP Servers** → **Manage MCP Servers** → **View raw config** (global file: `~/.gemini/config/mcp_config.json`). Note: the plugin's own servers load from the plugin root `mcp_config.json`; client-side `mcp_config.json` entries are an alternative for users who install no plugin. Remote servers must use Streamable HTTP (`serverUrl`); the legacy `httpUrl` / HTTP+SSE form is not supported by Antigravity.
+
+### 5. Gemini CLI
 
 ```bash
 gemini extensions install https://github.com/scalixworld/scalix-cloud-mcp
 export SCALIX_API_KEY="scalix_at_..."
 ```
 
-### 5. DeepSeek Harness (DSH)
+### 6. DeepSeek Harness (DSH)
 
 ```bash
 # Add the Scalix plugin bundle to your DSH profile
@@ -98,9 +145,40 @@ All tools are exposed under the `scalix_*` namespace (or `mcp__scalix__*` in DSH
 
 ## Authentication
 
-1. Generate an API Key in the [Scalix Cloud Console](https://console.scalix.world).
-2. Set `SCALIX_API_KEY=scalix_at_...` in your environment.
-3. Tool discovery is open and unauthenticated; tool execution requires a valid Bearer token.
+Scalix Cloud MCP (`https://api.scalix.world/v1/mcp`) supports both OAuth 2.1 and API key authentication:
+
+1. **OAuth 2.1 (Recommended for VS Code, GitHub Copilot, Claude, ChatGPT):** Point your client at `https://api.scalix.world/v1/mcp` without static headers. On connect, the server returns an RFC 9728 `WWW-Authenticate` challenge and your browser opens `https://console.scalix.world/oauth/consent` to select a project and grant scoped access.
+2. **API Key (for headless CLI, CI, or clients without OAuth):** Generate a project-scoped API key in the [Scalix Cloud Console](https://console.scalix.world), set `SCALIX_API_KEY=scalix_at_...` in your environment, and pass `Authorization: Bearer ${SCALIX_API_KEY}`.
+
+---
+
+## Publishing to the Antigravity Marketplace
+
+The Antigravity plugin lives in this repository at `.antigravity-plugin/plugin.json` (+ root `mcp_config.json`, `skills/`, `assets/logo.svg`). `agy plugin validate` passes on this directory with zero errors; it reports three *expected* multi-tool warnings that Google's own docs classify as safe in multi-provider repositories:
+
+| Warning | Why it is safe |
+| --- | --- |
+| `.mcp.json: never loaded` | Claude Code's file name — our Claude entry point; Antigravity loads MCP servers only from `mcp_config.json` (and `.mcp.json` is auto-excluded from the Marketplace bundle) |
+| `commands: never loaded` | Claude Code slash command (`commands/setup.md`); plugins have no commands, only skills |
+| `plugin.json: ignored` | Root manifest is the LobeHub manifest; `.antigravity-plugin/plugin.json` takes precedence and is promoted to root `plugin.json` in the Marketplace bundle |
+
+CI check (fails on any error, or any warning outside this repo's known multi-tool files):
+
+```bash
+agy plugin validate --json . | jq -e '
+  .manifest as $manifest |
+  [.findings[] | select(
+    .severity == "error" or (
+      .severity == "warning" and
+      (.file != ".mcp.json" and .file != "mcp.json" and .file != "AGENTS.md") and
+      (.file != "commands") and
+      (.file != "plugin.json" or $manifest != ".antigravity-plugin/plugin.json")
+    )
+  )] | length == 0
+'
+```
+
+To submit the listing to the [Antigravity Marketplace](https://antigravity.google/docs/marketplace), use the [partner intake form](https://forms.gle/2EX5RFYPoJe1UgxR9) with: marketplace name `scalix-cloud`, display name `Scalix Cloud`, repository URL, the hosted endpoint `https://api.scalix.world/v1/mcp`, and publisher contact. Keep `.antigravity-plugin/plugin.json` `version` in step with `.claude-plugin/plugin.json` on every release so installed clients detect updates.
 
 ---
 

@@ -1,0 +1,1506 @@
+{
+  "author": "Scalix World",
+  "authorUrl": "https://github.com/scalixworld",
+  "cloudEndpoint": "https://api.scalix.world/v1/mcp",
+  "description": "Official Scalix Cloud MCP server and plugin — 53 platform tools over one remote endpoint: PostgreSQL, serverless functions, AI inference, storage, computers, KV, DNS, events. https://scalix.world/mcp",
+  "homepage": "https://github.com/scalixworld/scalix-cloud-mcp",
+  "identifier": "scalixworld-scalix-cloud",
+  "name": "Scalix Cloud MCP",
+  "prompts": [],
+  "resources": [
+    {
+      "name": "Database Schema",
+      "uri": "scalix://schema",
+      "description": "Full database schema as structured JSON",
+      "mimeType": "application/json"
+    },
+    {
+      "name": "Relationship Map",
+      "uri": "scalix://relationships",
+      "description": "Foreign key relationships between tables",
+      "mimeType": "application/json"
+    },
+    {
+      "name": "Table Schema",
+      "uriTemplate": "scalix://schema/{table}",
+      "description": "Schema for a specific table",
+      "mimeType": "application/json"
+    }
+  ],
+  "tags": [
+    "database",
+    "cloud",
+    "postgres",
+    "ai",
+    "serverless",
+    "developer",
+    "hosted"
+  ],
+  "tools": [
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "Get the relationship map showing how tables are connected via foreign keys.",
+      "inputSchema": {
+        "properties": {},
+        "type": "object"
+      },
+      "name": "scalix_db_relationships"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "Search for columns by name or type across all tables.",
+      "inputSchema": {
+        "properties": {
+          "query": {
+            "description": "Search term to match column names or types",
+            "type": "string"
+          }
+        },
+        "required": [
+          "query"
+        ],
+        "type": "object"
+      },
+      "name": "scalix_db_search_columns"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "List all columns classified as containing personally identifiable information (PII).",
+      "inputSchema": {
+        "properties": {},
+        "type": "object"
+      },
+      "name": "scalix_db_pii"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "Analyze a SQL query and return optimization suggestions including index recommendations and query rewrites.",
+      "inputSchema": {
+        "properties": {
+          "sql": {
+            "description": "SQL query to analyze and optimize",
+            "type": "string"
+          }
+        },
+        "required": [
+          "sql"
+        ],
+        "type": "object"
+      },
+      "name": "scalix_db_optimize"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "Translate a plain-language question into a candidate SQL query using pattern-matching against the live schema (no AI model — simple questions only: counts, averages, filtered selects on a named table). Returns the SQL without executing it, with a confidence score; low confidence means the table was guessed. Review the statement and tables_used, then run it with scalix_db_query. For complex questions, read scalix_db_schema and write the SQL directly.",
+      "inputSchema": {
+        "properties": {
+          "question": {
+            "description": "The question to answer from the database, in plain language (e.g. 'how many orders shipped last week?')",
+            "type": "string"
+          }
+        },
+        "required": [
+          "question"
+        ],
+        "type": "object"
+      },
+      "name": "scalix_db_text_to_sql"
+    },
+    {
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      },
+      "description": "Execute a SQL query against the project database. Returns columns, rows, row count, and cost breakdown. Destructive statements (DROP/TRUNCATE/bulk DELETE) require a two-step confirmation: the first call returns code CONFIRMATION_REQUIRED with a confirmation_token — re-call with that value in confirm_token to execute.",
+      "inputSchema": {
+        "properties": {
+          "confirm_token": {
+            "description": "Confirmation token from a prior CONFIRMATION_REQUIRED response; required to execute destructive SQL (single-use, short TTL)",
+            "type": "string"
+          },
+          "params": {
+            "description": "Bind parameters for the query",
+            "items": {},
+            "type": "array"
+          },
+          "sql": {
+            "description": "SQL query to execute",
+            "type": "string"
+          },
+          "timeline_id": {
+            "description": "F17: run the query against a BRANCH timeline of this project instead of the primary. Takes the timeline_id returned by scalix_db_branch_create (or its db_<timeline_id> form). A timeline that is not a branch of this project fails the call — it never falls back to the primary. Omit for the primary.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "sql"
+        ],
+        "type": "object"
+      },
+      "name": "scalix_db_query"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "Get the full database schema including all tables, columns, types, and relationships.",
+      "inputSchema": {
+        "properties": {},
+        "type": "object"
+      },
+      "name": "scalix_db_schema"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "Get detailed information about a specific database table including columns, indexes, and foreign keys.",
+      "inputSchema": {
+        "properties": {
+          "table": {
+            "description": "Table name to inspect",
+            "type": "string"
+          }
+        },
+        "required": [
+          "table"
+        ],
+        "type": "object"
+      },
+      "name": "scalix_db_table"
+    },
+    {
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      },
+      "description": "Apply a database migration by version number.",
+      "inputSchema": {
+        "properties": {
+          "tenant_id": {
+            "description": "Tenant ID",
+            "type": "string"
+          },
+          "version": {
+            "description": "Migration version to apply",
+            "type": "string"
+          }
+        },
+        "required": [
+          "tenant_id",
+          "version"
+        ],
+        "type": "object"
+      },
+      "name": "scalix_db_migrate"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "List storage buckets, or list objects in a specific bucket with optional prefix filter.",
+      "inputSchema": {
+        "properties": {
+          "bucket": {
+            "description": "Bucket name (aliases: name). If omitted, lists all buckets.",
+            "type": "string"
+          },
+          "name": {
+            "description": "Alias of bucket — accepted for symmetry with create/delete",
+            "type": "string"
+          },
+          "prefix": {
+            "description": "Filter objects by key prefix",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "name": "scalix_storage_list"
+    },
+    {
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": true,
+        "readOnlyHint": false
+      },
+      "description": "Upload content to object storage. Provide the content as a base64-encoded string.",
+      "inputSchema": {
+        "properties": {
+          "bucket": {
+            "description": "Target bucket name",
+            "type": "string"
+          },
+          "content": {
+            "description": "Base64-encoded file content",
+            "type": "string"
+          },
+          "content_type": {
+            "default": "application/octet-stream",
+            "description": "MIME type",
+            "type": "string"
+          },
+          "key": {
+            "description": "Object key (path)",
+            "type": "string"
+          },
+          "name": {
+            "description": "Alias of bucket — accepted for symmetry with create/delete",
+            "type": "string"
+          }
+        },
+        "required": [
+          "bucket",
+          "key",
+          "content"
+        ],
+        "type": "object"
+      },
+      "name": "scalix_storage_upload"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "Download an object from storage. Returns the content as base64.",
+      "inputSchema": {
+        "properties": {
+          "bucket": {
+            "description": "Bucket name",
+            "type": "string"
+          },
+          "key": {
+            "description": "Object key (path)",
+            "type": "string"
+          },
+          "name": {
+            "description": "Alias of bucket — accepted for symmetry with create/delete",
+            "type": "string"
+          }
+        },
+        "required": [
+          "bucket",
+          "key"
+        ],
+        "type": "object"
+      },
+      "name": "scalix_storage_download"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true,
+        "readOnlyHint": false
+      },
+      "description": "Create a new Scalix Storage bucket in the project (S3-compatible object storage). Bucket names must be unique within the project. Setting public=true makes every object in the bucket readable without authentication — leave it false (the default) and use presigned URLs for private sharing. Public buckets double as static websites: upload index.html and serve it from the project's store subdomain at https://{slug}.store.scalix.world/buckets/{bucket}/objects/ (directory requests serve index.html; a 404.html object is served as the error page).",
+      "inputSchema": {
+        "properties": {
+          "bucket": {
+            "description": "Alias of name — accepted for symmetry with the object tools",
+            "type": "string"
+          },
+          "name": {
+            "description": "Bucket name, unique within the project (aliases: bucket)",
+            "type": "string"
+          },
+          "public": {
+            "default": false,
+            "description": "true = all objects publicly readable without auth (also serves as a static website on {slug}.store.scalix.world); false (default) = private, share via presigned URLs",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object"
+      },
+      "name": "scalix_storage_create_bucket"
+    },
+    {
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": true,
+        "readOnlyHint": false
+      },
+      "description": "Permanently delete an object (key) from a storage bucket. Irreversible.",
+      "inputSchema": {
+        "properties": {
+          "bucket": {
+            "description": "Bucket name (aliases: name)",
+            "type": "string"
+          },
+          "key": {
+            "description": "Object key (path) to delete",
+            "type": "string"
+          },
+          "name": {
+            "description": "Alias of bucket",
+            "type": "string"
+          }
+        },
+        "required": [
+          "bucket",
+          "key"
+        ],
+        "type": "object"
+      },
+      "name": "scalix_storage_delete_object"
+    },
+    {
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": true,
+        "readOnlyHint": false
+      },
+      "description": "Permanently delete a storage bucket and every object in it. Irreversible.",
+      "inputSchema": {
+        "properties": {
+          "bucket": {
+            "description": "Bucket name (aliases: name)",
+            "type": "string"
+          },
+          "name": {
+            "description": "Alias of bucket",
+            "type": "string"
+          }
+        },
+        "required": [
+          "bucket"
+        ],
+        "type": "object"
+      },
+      "name": "scalix_storage_delete_bucket"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "List all deployed serverless functions.",
+      "inputSchema": {
+        "properties": {},
+        "type": "object"
+      },
+      "name": "scalix_fn_list"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": false
+      },
+      "description": "Deploy a Scalix Function — serverless, per-request billed, running in isolated microVMs — from a container image. Invoke it with scalix_fn_invoke once deployed.",
+      "inputSchema": {
+        "properties": {
+          "image": {
+            "description": "Container image reference",
+            "type": "string"
+          },
+          "name": {
+            "description": "Function name",
+            "type": "string"
+          },
+          "region": {
+            "description": "Canonical region id to deploy into (from GET /v1/regions). Omit to use the organization's recorded region preference.",
+            "type": "string"
+          },
+          "region_pinned": {
+            "description": "true = hard-pin placement to `region`: the deploy fails closed when that region has no capacity instead of placing elsewhere. Requires `region`.",
+            "type": "boolean"
+          },
+          "runtime": {
+            "description": "Runtime — `node` or `python` (exactly what the functions orchestrator accepts)",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "image"
+        ],
+        "type": "object"
+      },
+      "name": "scalix_fn_deploy"
+    },
+    {
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": false
+      },
+      "description": "Invoke a deployed function with a JSON payload.",
+      "inputSchema": {
+        "properties": {
+          "data": {
+            "description": "JSON payload to pass to the function",
+            "type": "object"
+          },
+          "function_id": {
+            "description": "Function ID to invoke",
+            "type": "string"
+          }
+        },
+        "required": [
+          "function_id"
+        ],
+        "type": "object"
+      },
+      "name": "scalix_fn_invoke"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "Read a single value from the project's key-value store by exact key. Returns the stored value, or a not-found error if the key does not exist or its TTL has expired. Use scalix_kv_list to discover keys by prefix first.",
+      "inputSchema": {
+        "properties": {
+          "key": {
+            "description": "Exact key to look up (case-sensitive)",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key"
+        ],
+        "type": "object"
+      },
+      "name": "scalix_kv_get"
+    },
+    {
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      },
+      "description": "Set a key-value pair with optional TTL.",
+      "inputSchema": {
+        "properties": {
+          "key": {
+            "description": "Key to set",
+            "type": "string"
+          },
+          "ttl": {
+            "description": "Time-to-live in seconds (0 = no expiry)",
+            "type": "integer"
+          },
+          "value": {
+            "description": "Value to store",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "value"
+        ],
+        "type": "object"
+      },
+      "name": "scalix_kv_set"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "List keys in the key-value store, optionally filtered by prefix.",
+      "inputSchema": {
+        "properties": {
+          "prefix": {
+            "description": "Filter keys by prefix",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "name": "scalix_kv_list"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      },
+      "description": "Run AI inference on Scalix AI. Sends a prompt and returns the model's response in the OpenAI-compatible chat-completions format; tokens are billed to the project's credit pool. Discover available model IDs with scalix_ai_models.",
+      "inputSchema": {
+        "properties": {
+          "max_tokens": {
+            "default": 1024,
+            "description": "Maximum tokens to generate",
+            "type": "integer"
+          },
+          "model": {
+            "description": "Model ID (from scalix_ai_models — a scalix-auto/* tier or a scalix-gw/<vendor>/<model> catalog id)",
+            "type": "string"
+          },
+          "prompt": {
+            "description": "User prompt / message",
+            "type": "string"
+          },
+          "system": {
+            "description": "System message",
+            "type": "string"
+          },
+          "temperature": {
+            "default": 0.7,
+            "description": "Sampling temperature (0-2)",
+            "type": "number"
+          }
+        },
+        "required": [
+          "prompt"
+        ],
+        "type": "object"
+      },
+      "name": "scalix_ai_infer"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "List the AI models available to the project — virtual tiers and the pass-through catalog model IDs — for use in scalix_ai_infer.",
+      "inputSchema": {
+        "properties": {},
+        "type": "object"
+      },
+      "name": "scalix_ai_models"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": false
+      },
+      "description": "Publish an event to a topic. Provide an event_type (a short name for the kind of event, e.g. 'user.created') and the data payload.",
+      "inputSchema": {
+        "properties": {
+          "data": {
+            "description": "Event payload (JSON)",
+            "type": "object"
+          },
+          "event_type": {
+            "description": "Event type/name, e.g. 'user.created'",
+            "type": "string"
+          },
+          "topic_id": {
+            "description": "Topic ID to publish to",
+            "type": "string"
+          }
+        },
+        "required": [
+          "topic_id",
+          "event_type",
+          "data"
+        ],
+        "type": "object"
+      },
+      "name": "scalix_events_publish"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "List the event-bus topics in the project, with each topic's ID and name. Use this to find or verify a topic_id before publishing with scalix_events_publish; publishing to a non-existent topic fails.",
+      "inputSchema": {
+        "properties": {},
+        "type": "object"
+      },
+      "name": "scalix_events_topics"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": false
+      },
+      "description": "Create a cron schedule to run a function or webhook on a timer.",
+      "inputSchema": {
+        "properties": {
+          "action_type": {
+            "description": "Type of action to trigger",
+            "enum": [
+              "function",
+              "webhook"
+            ],
+            "type": "string"
+          },
+          "config": {
+            "description": "Action configuration (function_id or webhook URL)",
+            "type": "object"
+          },
+          "expression": {
+            "description": "Cron expression (e.g., '*/5 * * * *')",
+            "type": "string"
+          },
+          "name": {
+            "description": "Schedule name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "expression",
+          "action_type"
+        ],
+        "type": "object"
+      },
+      "name": "scalix_cron_create"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": false
+      },
+      "description": "Execute code in an isolated sandbox. Supports Python, JavaScript, TypeScript, and Bash. Returns stdout/stderr, the probed interpreter version, and any files the code wrote (base64, under size/count caps).",
+      "inputSchema": {
+        "properties": {
+          "code": {
+            "description": "Source code to execute",
+            "type": "string"
+          },
+          "files": {
+            "description": "Additional files (filename -> content)",
+            "type": "object"
+          },
+          "language": {
+            "description": "Programming language",
+            "enum": [
+              "python",
+              "javascript",
+              "typescript",
+              "bash"
+            ],
+            "type": "string"
+          },
+          "packages": {
+            "description": "Packages to install (pip/npm)",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "timeout_seconds": {
+            "description": "Max execution time in seconds (default: 30)",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "language",
+          "code"
+        ],
+        "type": "object"
+      },
+      "name": "scalix_sandbox_run"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      },
+      "description": "Get or create a persistent Linux machine by name. Idempotent — calling it again with the same name returns the existing machine rather than creating another, so it is safe to retry. Unlike a sandbox, the disk survives stop/start and is only erased by scalix_computer_delete.",
+      "inputSchema": {
+        "properties": {
+          "disk_gb": {
+            "description": "Root disk in GB, 5-200 (default 10). Fixed at create — disks do not grow. Ignored if the machine already exists.",
+            "type": "integer"
+          },
+          "memory_mb": {
+            "description": "Memory in MB, 512-32768 (default 1024). Ignored if the machine already exists.",
+            "type": "integer"
+          },
+          "name": {
+            "description": "Machine name: lowercase letters, digits and hyphens, max 63 characters. Unique to you.",
+            "type": "string"
+          },
+          "region": {
+            "description": "Optional canonical region id (from GET /v1/regions) to place the machine in. Ignored if the machine already exists — a Computer is host-bound for life. Omit to let the platform pick.",
+            "type": "string"
+          },
+          "ssh_keys": {
+            "description": "OpenSSH public keys to authorise for root, max 32, e.g. [\"ssh-ed25519 AAAAC3Nz… you@laptop\"]. Only needed if a human will ssh in — exec, write_file and read_file all work without one. Send the public half only; a private key is rejected. Ignored if the machine already exists — use scalix_computer_set_ssh_keys to change them. Supplying this needs the sandbox:execute scope on top of sandbox:create, because a key is a root shell; omit it and sandbox:create alone is enough.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "vcpus": {
+            "description": "vCPUs, 1-16 (default 1). Ignored if the machine already exists.",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "type": "object"
+      },
+      "name": "scalix_computer_create"
+    },
+    {
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      },
+      "description": "Replace the ssh keys authorised for root on a persistent Linux machine. This is how you revoke: send the list without the key you want gone, and on a running machine it stops working immediately. Sending an empty list removes every key. Not a patch — whatever you send becomes the whole list, so read the current keys from scalix_computer_list first if you mean to add one.",
+      "inputSchema": {
+        "properties": {
+          "id": {
+            "description": "Machine id",
+            "type": "string"
+          },
+          "ssh_keys": {
+            "description": "The complete list of OpenSSH public keys, max 32. Empty array removes all of them.",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "id",
+          "ssh_keys"
+        ],
+        "type": "object"
+      },
+      "name": "scalix_computer_set_ssh_keys"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "List your persistent Linux machines with their status, address and resource shape.",
+      "inputSchema": {
+        "properties": {},
+        "type": "object"
+      },
+      "name": "scalix_computer_list"
+    },
+    {
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": false
+      },
+      "description": "Run a command inside a persistent Linux machine and wait for it to finish. Returns exit code, stdout and stderr. The machine must be running.",
+      "inputSchema": {
+        "properties": {
+          "args": {
+            "description": "Arguments passed to the program; omit when command is a shell string",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "command": {
+            "description": "Either a bare program (e.g. bash, with args passed separately) OR a full shell string (e.g. \"apt-get install -y jq\") — a command containing whitespace is run via sh -lc automatically, so no manual [\"-lc\", ...] wrapping is needed",
+            "type": "string"
+          },
+          "cwd": {
+            "description": "Working directory inside the machine",
+            "type": "string"
+          },
+          "env": {
+            "description": "Environment variables for this command only",
+            "type": "object"
+          },
+          "id": {
+            "description": "Machine id from scalix_computer_create or scalix_computer_list",
+            "type": "string"
+          },
+          "timeout_ms": {
+            "description": "Give up after this many milliseconds, 1000-300000 (default 120000). 300s is the platform-wide hop ceiling — a larger request is served at 300s, not rejected.",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "command"
+        ],
+        "type": "object"
+      },
+      "name": "scalix_computer_exec"
+    },
+    {
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      },
+      "description": "Write a text file into a persistent Linux machine. Use this instead of shelling out with cat/echo — no quoting to get wrong.",
+      "inputSchema": {
+        "properties": {
+          "content": {
+            "description": "File contents as text",
+            "type": "string"
+          },
+          "id": {
+            "description": "Machine id",
+            "type": "string"
+          },
+          "mode": {
+            "description": "Unix mode in decimal, e.g. 493 for 0755. Omit unless the file must be executable.",
+            "type": "integer"
+          },
+          "path": {
+            "description": "Absolute path inside the machine, e.g. /root/app/main.py",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "path",
+          "content"
+        ],
+        "type": "object"
+      },
+      "name": "scalix_computer_write_file"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "Read a text file out of a persistent Linux machine.",
+      "inputSchema": {
+        "properties": {
+          "id": {
+            "description": "Machine id",
+            "type": "string"
+          },
+          "path": {
+            "description": "Absolute path inside the machine",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "path"
+        ],
+        "type": "object"
+      },
+      "name": "scalix_computer_read_file"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      },
+      "description": "Stop a persistent Linux machine. The disk and the network address are kept, so starting it again returns the same files at the same address. Stop machines you are done with — a stopped machine costs only its disk.",
+      "inputSchema": {
+        "properties": {
+          "id": {
+            "description": "Machine id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "type": "object"
+      },
+      "name": "scalix_computer_stop"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      },
+      "description": "Start a stopped persistent Linux machine. Same disk, same address.",
+      "inputSchema": {
+        "properties": {
+          "id": {
+            "description": "Machine id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "type": "object"
+      },
+      "name": "scalix_computer_start"
+    },
+    {
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      },
+      "description": "Permanently delete a persistent Linux machine AND its disk. This cannot be undone — use scalix_computer_stop if you may want the files back.",
+      "inputSchema": {
+        "properties": {
+          "id": {
+            "description": "Machine id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "type": "object"
+      },
+      "name": "scalix_computer_delete"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "List your crews with their ids and names. A crew is a team of AI members that share a notice board; use the crew id with the board tools.",
+      "inputSchema": {
+        "properties": {},
+        "type": "object"
+      },
+      "name": "scalix_crew_list"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "Read a crew's notice board: every pinned note plus the newest unpinned ones, current as of this call. The board is the crew's shared coordination state — read it before starting work so you act on the latest news, and post what teammates need to know with scalix_crew_board_post.",
+      "inputSchema": {
+        "properties": {
+          "crew_id": {
+            "description": "Crew id from scalix_crew_list",
+            "type": "string"
+          }
+        },
+        "required": [
+          "crew_id"
+        ],
+        "type": "object"
+      },
+      "name": "scalix_crew_board_read"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      },
+      "description": "Post a note to the crew's notice board for other members and the human to see. The board is news, not knowledge: set ttl_seconds so routine updates expire on their own, pin only what every future task must see, and set owner_member_id to hand work off to a specific member. Notes cannot be edited from here — post a correction instead.",
+      "inputSchema": {
+        "properties": {
+          "author_member_id": {
+            "description": "Your member id, so the note is attributed. Omit when posting as the human.",
+            "type": "string"
+          },
+          "body": {
+            "description": "The note, max 8000 chars. Write for a teammate who was not watching your work.",
+            "type": "string"
+          },
+          "crew_id": {
+            "description": "Crew id from scalix_crew_list",
+            "type": "string"
+          },
+          "owner_member_id": {
+            "description": "Hand off: the member id now responsible for this item.",
+            "type": "string"
+          },
+          "pinned": {
+            "description": "Keep this in front of everyone indefinitely. Default false; most notes should expire instead.",
+            "type": "boolean"
+          },
+          "recipient_member_id": {
+            "description": "Address the note to one member — a direct message that still rides the shared board.",
+            "type": "string"
+          },
+          "ttl_seconds": {
+            "description": "Seconds until the note expires, 60 to 7776000 (90 days). Omit for no expiry — usually only right for pins.",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "crew_id",
+          "body"
+        ],
+        "type": "object"
+      },
+      "name": "scalix_crew_board_post"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      },
+      "description": "Add a custom domain to the project. Returns DNS records to configure.",
+      "inputSchema": {
+        "properties": {
+          "domain": {
+            "description": "Domain name to add (e.g., api.example.com)",
+            "type": "string"
+          }
+        },
+        "required": [
+          "domain"
+        ],
+        "type": "object"
+      },
+      "name": "scalix_domain_add"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "List all custom domains and their SSL/verification status.",
+      "inputSchema": {
+        "properties": {},
+        "type": "object"
+      },
+      "name": "scalix_domain_list"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true,
+        "readOnlyHint": false
+      },
+      "description": "Verify DNS configuration for a custom domain and provision SSL certificate.",
+      "inputSchema": {
+        "properties": {
+          "domain": {
+            "description": "Domain to verify",
+            "type": "string"
+          }
+        },
+        "required": [
+          "domain"
+        ],
+        "type": "object"
+      },
+      "name": "scalix_domain_verify"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": false
+      },
+      "description": "Create a new container image build from a Git repository or Dockerfile.",
+      "inputSchema": {
+        "properties": {
+          "branch": {
+            "default": "main",
+            "description": "Git branch",
+            "type": "string"
+          },
+          "dockerfile": {
+            "default": "Dockerfile",
+            "description": "Path to Dockerfile in repo",
+            "type": "string"
+          },
+          "git_url": {
+            "description": "Git repository URL",
+            "type": "string"
+          },
+          "name": {
+            "description": "Build name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "git_url"
+        ],
+        "type": "object"
+      },
+      "name": "scalix_build_create"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "Get the status and logs of a build.",
+      "inputSchema": {
+        "properties": {
+          "build_id": {
+            "description": "Build ID to check",
+            "type": "string"
+          }
+        },
+        "required": [
+          "build_id"
+        ],
+        "type": "object"
+      },
+      "name": "scalix_build_status"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      },
+      "description": "Create a new project within an organization. Returns the project ID, name, and slug. Issue an API key for the new project separately. Needs an admin API key: organization admin scope is never delegated to a connected app, so this tool fails on an OAuth connection.",
+      "inputSchema": {
+        "properties": {
+          "name": {
+            "description": "Project display name",
+            "type": "string"
+          },
+          "org_id": {
+            "description": "Organization ID",
+            "type": "string"
+          },
+          "slug": {
+            "description": "URL-safe project slug",
+            "type": "string"
+          }
+        },
+        "required": [
+          "org_id",
+          "name",
+          "slug"
+        ],
+        "type": "object"
+      },
+      "name": "scalix_project_create"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "List every project in an organization, with each project's ID, name, and slug. Use this to resolve a project ID before calling project-scoped tools. `org_id` is optional: omit it to list the projects of the organization the API key belongs to (resolved via GET /v1/me). Needs an admin API key: organization admin scope is never delegated to a connected app, so this tool fails on an OAuth connection.",
+      "inputSchema": {
+        "properties": {
+          "org_id": {
+            "description": "Organization ID whose projects to list. Optional — defaults to the API key's own organization.",
+            "type": "string"
+          }
+        },
+        "required": [],
+        "type": "object"
+      },
+      "name": "scalix_project_list"
+    },
+    {
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      },
+      "description": "Configure end-user authentication for the project — require MFA, require email confirmation, and set the allowed auth providers. Needs an admin API key: organization admin scope is never delegated to a connected app, so this tool fails on an OAuth connection.",
+      "inputSchema": {
+        "properties": {
+          "allowed_providers": {
+            "description": "Allowed auth providers (e.g., [\"email\", \"google\", \"github\"])",
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "mfa_enabled": {
+            "description": "Require multi-factor authentication",
+            "type": "boolean"
+          },
+          "require_email_confirmation": {
+            "description": "Require users to confirm their email before a session is issued",
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "name": "scalix_auth_configure"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "Get the current health status of the Scalix Cloud platform including all service components.",
+      "inputSchema": {
+        "properties": {},
+        "type": "object"
+      },
+      "name": "scalix_status"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": false
+      },
+      "description": "Deploy a long-running container service on Scalix Run from a container image. Creates a new service, or a new revision of an existing service with the same name, with health checks, a public HTTPS URL, and autoscaling between min_instances and max_instances (min 0 = scale-to-zero when idle). Billed per vCPU-hour while instances run. Roll back a bad revision with scalix_run_rollback.",
+      "inputSchema": {
+        "properties": {
+          "env": {
+            "description": "Environment variables as key-value pairs",
+            "type": "object"
+          },
+          "image": {
+            "description": "Container image from the Scalix registry ({registry}/{project_id}/{repo}:{tag}). External registries (Docker Hub, etc.) are NOT supported — build & push first with scalix_build_create.",
+            "type": "string"
+          },
+          "max_instances": {
+            "default": 10,
+            "description": "Maximum instances",
+            "type": "integer"
+          },
+          "min_instances": {
+            "default": 0,
+            "description": "Minimum instances (0 = scale to zero)",
+            "type": "integer"
+          },
+          "name": {
+            "description": "Service name",
+            "type": "string"
+          },
+          "port": {
+            "default": 8080,
+            "description": "Port the container listens on",
+            "type": "integer"
+          },
+          "region": {
+            "description": "Canonical region id to deploy into (from GET /v1/regions). Omit to use the organization's recorded region preference.",
+            "type": "string"
+          },
+          "region_pinned": {
+            "description": "true = hard-pin placement (initial AND scale-out replicas) to `region`: the deploy fails closed when that region has no capacity instead of placing elsewhere. Requires `region`.",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "name",
+          "image"
+        ],
+        "type": "object"
+      },
+      "name": "scalix_run_deploy"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "List all deployed container services in the project.",
+      "inputSchema": {
+        "properties": {},
+        "type": "object"
+      },
+      "name": "scalix_run_list"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      },
+      "description": "Change the autoscaling bounds of an existing Scalix Run service without redeploying it. Raising min_instances keeps instances warm (no cold starts, higher cost); min_instances 0 enables scale-to-zero when idle. Takes effect immediately. Find service IDs with scalix_run_list.",
+      "inputSchema": {
+        "properties": {
+          "id": {
+            "description": "Service ID (from scalix_run_list)",
+            "type": "string"
+          },
+          "max_instances": {
+            "description": "New maximum instance count the service may scale up to",
+            "type": "integer"
+          },
+          "min_instances": {
+            "description": "New minimum instance count (0 = scale-to-zero when idle)",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "type": "object"
+      },
+      "name": "scalix_run_scale"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": false
+      },
+      "description": "Roll a Scalix Run service back to an earlier revision — omit 'revision' to return to the immediately previous one. Traffic switches to the target revision; the replaced revision is kept and can be redeployed later. Use scalix_run_list to see services and their current revisions.",
+      "inputSchema": {
+        "properties": {
+          "id": {
+            "description": "Service ID (from scalix_run_list)",
+            "type": "string"
+          },
+          "revision": {
+            "description": "Revision number to roll back to; omit for the immediately previous revision",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "type": "object"
+      },
+      "name": "scalix_run_rollback"
+    },
+    {
+      "annotations": {
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": true,
+        "readOnlyHint": false
+      },
+      "description": "Permanently delete a Scalix Run service. This cannot be undone: it stops the running instances, releases the public HTTPS URL, erases any attached volumes and discards every revision, so scalix_run_rollback cannot bring it back afterwards. To stop paying for an idle service without losing it, set min_instances to 0 with scalix_run_scale instead.",
+      "inputSchema": {
+        "properties": {
+          "id": {
+            "description": "Service ID (from scalix_run_list)",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "type": "object"
+      },
+      "name": "scalix_run_delete"
+    }
+  ],
+  "version": "1.6.1",
+  "category": "developer",
+  "icon": "🛰️",
+  "localizations": [
+    {
+      "locale": "zh-CN",
+      "name": "Scalix Cloud MCP",
+      "description": "Scalix Cloud 官方 MCP 服务器 — 通过单一远程端点提供 53 个平台工具：PostgreSQL、无服务器函数、AI 推理、对象存储、Linux 云主机、KV、DNS 与平台状态。",
+      "tags": [
+        "数据库",
+        "云",
+        "Postgres",
+        "AI",
+        "开发者"
+      ]
+    },
+    {
+      "locale": "ja",
+      "name": "Scalix Cloud MCP",
+      "description": "Scalix Cloud の公式 MCP サーバー — 単一のリモートエンドポイント経由で 53 のプラットフォームツールを提供: PostgreSQL、サーバーレス関数、AI 推論、オブジェクトストレージ、Linux マシン、KV、DNS、プラットフォームステータス。",
+      "tags": [
+        "データベース",
+        "クラウド",
+        "Postgres",
+        "AI",
+        "開発者"
+      ]
+    },
+    {
+      "locale": "ko",
+      "name": "Scalix Cloud MCP",
+      "description": "Scalix Cloud 공식 MCP 서버 — 단일 원격 엔드포인트로 53개의 플랫폼 도구 제공: PostgreSQL, 서버리스 함수, AI 추론, 오브젝트 스토리지, Linux 머신, KV, DNS, 플랫폼 상태.",
+      "tags": [
+        "데이터베이스",
+        "클라우드",
+        "Postgres",
+        "AI",
+        "개발자"
+      ]
+    }
+  ]
+}

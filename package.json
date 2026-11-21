@@ -1,0 +1,57 @@
+{
+  "name": "@scalix-world/scalix-cloud-mcp",
+  "version": "1.6.1",
+  "description": "Official Scalix Cloud MCP server and plugin — 53 platform tools over one remote endpoint: PostgreSQL, serverless functions, AI inference, storage, computers, KV, DNS, events. https://scalix.world/mcp",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "dsh --profile web --patch ./cordis.patch.yml --port ${PORT:-8080}"
+  },
+  "dependencies": {
+    "@deepseek-ai/dsh": "^0.1.0"
+  },
+  "files": [
+    "cordis.patch.yml",
+    ".mcp.json",
+    ".antigravity-plugin",
+    "mcp_config.json",
+    "assets",
+    "plugin.json",
+    "lhm.plugin.json",
+    ".claude-plugin",
+    "skills",
+    "commands",
+    "index.js",
+    "README.md",
+    "LICENSE",
+    "Dockerfile",
+    "scalix-logo.png"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/dsh-mcp-client": "^0.1.0"
+  },
+  "keywords": [
+    "mcp",
+    "scalix",
+    "cloud",
+    "dsh-plugin",
+    "claude-plugin",
+    "antigravity",
+    "model-context-protocol"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/scalixworld/scalix-cloud-mcp.git"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "mcpName": "world.scalix/cloud"
+}
