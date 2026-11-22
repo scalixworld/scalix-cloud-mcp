@@ -1,0 +1,30 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "world.scalix/cloud",
+  "title": "Scalix Cloud",
+  "description": "The agent-native cloud: database, functions, AI, storage, computers. 53 tools. OAuth or API key.",
+  "websiteUrl": "https://scalix.world",
+  "repository": {
+    "url": "https://github.com/scalixworld/scalix-cloud-mcp",
+    "source": "github"
+  },
+  "icons": [
+    {
+      "src": "https://scalix.world/scalix-logo.png",
+      "mimeType": "image/png",
+      "sizes": ["512x512"]
+    },
+    {
+      "src": "https://scalix.world/scalix-logo.svg",
+      "mimeType": "image/svg+xml",
+      "sizes": ["any"]
+    }
+  ],
+  "version": "1.6.1",
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://api.scalix.world/v1/mcp"
+    }
+  ]
+}

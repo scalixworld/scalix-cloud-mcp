@@ -27,11 +27,30 @@ jobs:
       - name: Validate JSON manifests
         run: |
           python3 - <<'EOF'
-          import json, sys
+          import json
           required_ok = {
-              'plugin.json': lambda d: bool(d.get('name')) and bool(d.get('description')),
+              'plugin.json': lambda d: (
+                  d.get('$schema') == 'https://agent-plugins.org/schemas/1.0.0/plugin.schema.json'
+                  and bool(d.get('name'))
+                  and isinstance(d.get('author'), dict)
+                  and set(d.keys()) <= {'$schema', 'name', 'version', 'description', 'author', 'homepage', 'repository', 'license', 'keywords', 'extensions'}
+              ),
+              'mcp.json': lambda d: (
+                  d.get('$schema') == 'https://agent-plugins.org/schemas/1.0.0/mcp.schema.json'
+                  and 'mcpServers' in d
+                  and d['mcpServers'].get('scalix-cloud', {}).get('type') == 'streamable-http'
+                  and 'headers' not in d['mcpServers'].get('scalix-cloud', {})
+              ),
+              'server.json': lambda d: (
+                  d.get('name') == 'world.scalix/cloud'
+                  and bool(d.get('remotes'))
+                  and d['remotes'][0].get('url') == 'https://api.scalix.world/v1/mcp'
+                  and 'headers' not in d['remotes'][0]
+              ),
               '.claude-plugin/plugin.json': lambda d: bool(d.get('name')),
               '.claude-plugin/marketplace.json': lambda d: bool(d),
+              '.antigravity-plugin/plugin.json': lambda d: bool(d.get('name')),
+              'lhm.plugin.json': lambda d: bool(d.get('identifier')),
               'mcp_config.json': lambda d: 'mcpServers' in d,
               '.mcp.json': lambda d: 'mcpServers' in d,
               'gemini-extension.json': lambda d: bool(d),
@@ -45,7 +64,7 @@ jobs:
                   failed.append(f'{path}: unparseable ({e})')
                   continue
               if not check(data):
-                  failed.append(f'{path}: missing required fields')
+                  failed.append(f'{path}: missing or invalid required fields')
           if failed:
               print('\n'.join(failed))
               raise SystemExit(1)
@@ -57,9 +76,13 @@ jobs:
           python3 - <<'EOF'
           import json
           mcp = json.load(open('.mcp.json'))['mcpServers']['scalix']
-          assert mcp['url'].startswith('https://'), 'MCP endpoint must be HTTPS'
-          assert '${SCALIX_API_KEY}' in mcp['headers']['Authorization'], 'API key must come from env'
-          print('MCP endpoint config OK:', mcp['url'])
+          assert mcp['url'] == 'https://api.scalix.world/v1/mcp', f"Unexpected URL: {mcp['url']}"
+          assert 'headers' not in mcp, 'OAuth 2.1 endpoint must not require static headers'
+          agent_mcp = json.load(open('mcp.json'))['mcpServers']['scalix-cloud']
+          assert agent_mcp['url'] == 'https://api.scalix.world/v1/mcp'
+          assert agent_mcp['type'] == 'streamable-http'
+          assert 'headers' not in agent_mcp
+          print('MCP endpoint config OK (OAuth 2.1):', mcp['url'])
           EOF
 
       - name: Validate skill references

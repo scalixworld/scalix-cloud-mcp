@@ -1,18 +1,27 @@
 {
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "scalix-cloud",
   "version": "1.6.1",
-  "description": "Scalix Cloud MCP integration — 53 platform tools over one remote endpoint (PostgreSQL, serverless functions, AI inference, computers, containers, object storage, auth, billing).",
-  "author": "Scalix World",
-  "skills": [
-    "skills/"
-  ],
-  "mcpServers": {
-    "scalix": {
-      "type": "http",
-      "url": "https://api.scalix.world/v1/mcp",
-      "headers": {
-        "Authorization": "Bearer ${SCALIX_API_KEY}"
-      }
-    }
-  }
+  "description": "Operate Scalix Cloud — 53 platform tools over one remote MCP endpoint (PostgreSQL, serverless functions, AI inference, computers, containers, object storage, auth, billing).",
+  "author": {
+    "name": "Scalix World",
+    "url": "https://scalix.world"
+  },
+  "homepage": "https://scalix.world",
+  "repository": "https://github.com/scalixworld/scalix-cloud-mcp",
+  "license": "MIT",
+  "keywords": [
+    "scalix",
+    "cloud",
+    "mcp",
+    "postgres",
+    "postgresql",
+    "database",
+    "serverless",
+    "functions",
+    "ai",
+    "ai-inference",
+    "storage",
+    "computers"
+  ]
 }
