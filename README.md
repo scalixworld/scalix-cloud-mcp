@@ -8,11 +8,11 @@ Official Model Context Protocol (MCP) plugin and server configuration for [Scali
 
 This repository includes native manifests for all major coding agents and MCP clients:
 
-- **VS Code & GitHub Copilot** — 1-click install from the GitHub MCP Registry (`world.scalix/cloud`) with native browser OAuth 2.1
-- **Claude Code** — via `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json`
-- **Cursor / Windsurf / Codex** — via `.mcp.json` / generic Streamable HTTP configuration
+- **VS Code & GitHub Copilot** — 1-click install via GitHub MCP Registry (`server.json` / `world.scalix/cloud`) or Agent Plugins (`plugin.json` + `mcp.json`) with native browser OAuth 2.1
+- **Claude Code** — via `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`, and OAuth 2.1 `.mcp.json`
+- **Cursor / Windsurf / Codex** — via Streamable HTTP OAuth 2.1 (or optional API key)
 - **Google Antigravity** — via `.antigravity-plugin/plugin.json` + `mcp_config.json` (MCP Store / Plugin Marketplace)
-- **Gemini CLI** — via GitHub URL extension install
+- **Gemini CLI** — via `gemini-extension.json` with OAuth 2.1 browser consent
 - **DeepSeek Harness (DSH)** — via `cordis.patch.yml` and `@scalix-world/scalix-cloud-mcp` npm bundle
 
 ---
@@ -21,7 +21,7 @@ This repository includes native manifests for all major coding agents and MCP cl
 
 ### 1. VS Code & GitHub Copilot (OAuth 2.1 — Recommended)
 
-1. Open **Extensions** in VS Code, search `@mcp Scalix Cloud` (or install from the GitHub MCP Registry `world.scalix/cloud`), and click **Install**.
+1. Open **Extensions** in VS Code, search `@mcp Scalix Cloud` (or install from Copilot Customizations / GitHub MCP Registry `world.scalix/cloud`), and click **Install**.
 2. Start a chat in Copilot / Agent mode — VS Code will automatically open `https://console.scalix.world/oauth/consent` in your browser so you can pick a project and click **Allow**. No API key copy/paste or `${input:...}` configuration required.
 
 If configuring manually in `~/.copilot/mcp-config.json` or repo-root `.mcp.json`:
@@ -44,25 +44,24 @@ If configuring manually in `~/.copilot/mcp-config.json` or repo-root `.mcp.json`
 claude plugin marketplace add scalixworld/scalix-cloud-mcp
 claude plugin install scalix-cloud@scalixworld
 
-# Authenticate via OAuth on connect, or export an API key for headless runs:
+# Authenticate via OAuth 2.1 in your browser on first connect, or export an API key for headless runs:
 export SCALIX_API_KEY="scalix_at_..."
 ```
 
-### 3. Cursor / Windsurf / Codex / Generic MCP (`.mcp.json`)
+### 3. Cursor / Windsurf / Codex / Generic MCP
 
 ```json
 {
   "mcpServers": {
     "scalix": {
-      "transport": "streamable-http",
-      "url": "https://api.scalix.world/v1/mcp",
-      "headers": {
-        "Authorization": "Bearer ${SCALIX_API_KEY}"
-      }
+      "type": "streamable-http",
+      "url": "https://api.scalix.world/v1/mcp"
     }
   }
 }
 ```
+
+*(Omit static `headers` to use OAuth 2.1 browser consent; add `"headers": { "Authorization": "Bearer ${SCALIX_API_KEY}" }` only for headless/CI environments.)*
 
 ### 4. Google Antigravity
 
@@ -100,8 +99,9 @@ Edit this in Antigravity IDE via `…` → **MCP Servers** → **Manage MCP Serv
 
 ```bash
 gemini extensions install https://github.com/scalixworld/scalix-cloud-mcp
-export SCALIX_API_KEY="scalix_at_..."
 ```
+
+Uses OAuth 2.1 browser consent on first connect (or set `export SCALIX_API_KEY="scalix_at_..."` for headless runs).
 
 ### 6. DeepSeek Harness (DSH)
 
@@ -160,7 +160,7 @@ The Antigravity plugin lives in this repository at `.antigravity-plugin/plugin.j
 | --- | --- |
 | `.mcp.json: never loaded` | Claude Code's file name — our Claude entry point; Antigravity loads MCP servers only from `mcp_config.json` (and `.mcp.json` is auto-excluded from the Marketplace bundle) |
 | `commands: never loaded` | Claude Code slash command (`commands/setup.md`); plugins have no commands, only skills |
-| `plugin.json: ignored` | Root manifest is the LobeHub manifest; `.antigravity-plugin/plugin.json` takes precedence and is promoted to root `plugin.json` in the Marketplace bundle |
+| `plugin.json: ignored` | Root manifest follows the portable Agent Plugins 1.0.0 schema (`agent-plugins.org/schemas/1.0.0`, while `lhm.plugin.json` is the LobeHub manifest); `.antigravity-plugin/plugin.json` takes precedence and is promoted to root `plugin.json` in the Antigravity Marketplace bundle |
 
 CI check (fails on any error, or any warning outside this repo's known multi-tool files):
 

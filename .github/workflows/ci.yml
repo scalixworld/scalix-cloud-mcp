@@ -82,6 +82,9 @@ jobs:
           assert agent_mcp['url'] == 'https://api.scalix.world/v1/mcp'
           assert agent_mcp['type'] == 'streamable-http'
           assert 'headers' not in agent_mcp
+          gemini = json.load(open('gemini-extension.json'))['mcpServers']['scalix']
+          assert gemini['httpUrl'] == 'https://api.scalix.world/v1/mcp'
+          assert 'headers' not in gemini
           print('MCP endpoint config OK (OAuth 2.1):', mcp['url'])
           EOF
 

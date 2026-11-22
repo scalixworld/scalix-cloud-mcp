@@ -1,66 +1,101 @@
-# Installing the Scalix Cloud MCP server (for AI agents)
+# Installing the Scalix Cloud MCP Server (for AI Agents)
 
-Scalix Cloud is a hosted, remote MCP server. There is nothing to download, build, or run
-locally. Configuration is one URL and one API key.
+Scalix Cloud is a hosted, remote MCP server. There is nothing to build or run locally — configuration is a single Streamable HTTP URL with native OAuth 2.1 browser consent.
 
-- Endpoint: `https://api.scalix.world/v1/mcp` (streamable HTTP)
-- Auth: OAuth 2.1 browser consent (recommended — clients follow the RFC 9728 `401` `WWW-Authenticate` challenge automatically) or `Authorization: Bearer <SCALIX_API_KEY>` header
-- Get a key: sign in at https://console.scalix.world and create an API key for your project
-- Metadata discovery: `GET https://api.scalix.world/.well-known/oauth-protected-resource` works without credentials; `/v1/mcp` requests require OAuth 2.1 or a Bearer API key
+- **Endpoint:** `https://api.scalix.world/v1/mcp` (Streamable HTTP)
+- **Auth (Recommended):** OAuth 2.1 browser consent — omit static `Authorization` headers; clients follow the RFC 9728 `401` `WWW-Authenticate` challenge automatically and open `https://console.scalix.world/oauth/consent`.
+- **Auth (Headless / CI):** Create a project-scoped API key at `https://console.scalix.world/org/keys` and pass `Authorization: Bearer <SCALIX_API_KEY>`.
+- **Discovery:** `GET https://api.scalix.world/.well-known/oauth-protected-resource` works without credentials (`"resource":"https://api.scalix.world/v1/mcp"`).
 
 ## VS Code & GitHub Copilot (OAuth 2.1)
 
-Install `world.scalix/cloud` from the `@mcp` Extensions gallery or GitHub MCP Registry. On first tool use, VS Code opens `https://console.scalix.world/oauth/consent` in your browser — pick a project and click **Allow**. No manual API key configuration required.
+Install `world.scalix/cloud` from the VS Code `@mcp` gallery or GitHub Copilot Customizations (`scalixworld/scalix-cloud-mcp`). On first tool use, VS Code opens `https://console.scalix.world/oauth/consent` in your browser — pick a project and click **Allow**.
 
-## Claude Code
+Or add directly in `.vscode/mcp.json`:
+
+```json
+{
+  "servers": {
+    "scalix-cloud": {
+      "type": "http",
+      "url": "https://api.scalix.world/v1/mcp"
+    }
+  }
+}
+```
+
+## Claude Code (OAuth 2.1)
 
 ```bash
-claude mcp add --transport http scalix https://api.scalix.world/v1/mcp \
-  --header "Authorization: Bearer $SCALIX_API_KEY"
+# Install via plugin marketplace
+claude plugin marketplace add scalixworld/scalix-cloud-mcp
+claude plugin install scalix-cloud@scalixworld
+
+# Or add the remote MCP endpoint directly
+claude mcp add --transport http scalix https://api.scalix.world/v1/mcp
 ```
 
 Verify with `claude mcp list` or `/mcp` inside a session.
 
-## Cline
+## Cursor / Windsurf / Codex / Cline (OAuth 2.1)
 
-Add to `cline_mcp_settings.json` (Settings → MCP Servers → Configure):
+Point your Streamable HTTP client at the endpoint without static `headers`:
 
 ```json
 {
   "mcpServers": {
     "scalix": {
+      "type": "streamable-http",
+      "url": "https://api.scalix.world/v1/mcp"
+    }
+  }
+}
+```
+
+## Google Antigravity (OAuth 2.1)
+
+```bash
+agy plugin install https://github.com/scalixworld/scalix-cloud-mcp
+```
+
+Or configure `serverUrl` in `~/.gemini/config/mcp_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "scalix": {
+      "serverUrl": "https://api.scalix.world/v1/mcp"
+    }
+  }
+}
+```
+
+## Gemini CLI (OAuth 2.1)
+
+```bash
+gemini extensions install https://github.com/scalixworld/scalix-cloud-mcp
+```
+
+## Headless / CI Clients Without OAuth (API Key Fallback)
+
+For environments that cannot complete a browser OAuth flow, pass a project-scoped API key from `https://console.scalix.world/org/keys`:
+
+```json
+{
+  "mcpServers": {
+    "scalix": {
+      "type": "http",
       "url": "https://api.scalix.world/v1/mcp",
       "headers": {
-        "Authorization": "Bearer YOUR_SCALIX_API_KEY"
-      },
-      "type": "streamableHttp"
+        "Authorization": "Bearer ${SCALIX_API_KEY}"
+      }
     }
   }
 }
 ```
 
-## Cursor / other MCP clients
+## What You Get
 
-Any client that supports remote streamable-HTTP MCP servers takes the same two values:
-the URL above and the Authorization header.
+53 tools covering the Scalix Cloud platform: run queries and migrations against Postgres-compatible databases (`ScalixNova`), create and drop database branches, deploy services (`Run`) and functions in isolated microVMs, run persistent Linux machines (`Computers`), manage object storage and KV, run AI inference, and inspect usage and billing. Consequential actions pause for human approval.
 
-```json
-{
-  "mcpServers": {
-    "scalix": {
-      "url": "https://api.scalix.world/v1/mcp",
-      "headers": { "Authorization": "Bearer YOUR_SCALIX_API_KEY" }
-    }
-  }
-}
-```
-
-## What you get
-
-53 tools covering the Scalix World platform: run queries and migrations against
-Postgres-compatible databases, create and drop database branches, deploy services and
-functions in isolated microVMs, manage object storage, read logs and status, and check
-usage and billing. One API key authorizes all of it. Consequential actions pause for
-human approval.
-
-Troubleshooting: a `401` on `/v1/mcp` means no valid OAuth token or API key was supplied (use `GET https://api.scalix.world/.well-known/oauth-protected-resource` for credential-free discovery). Keys are project-scoped; create them in the console.
+Troubleshooting: an unauthenticated `POST /v1/mcp` returns HTTP `401` with `WWW-Authenticate` (`resource_metadata="https://api.scalix.world/.well-known/oauth-protected-resource/v1/mcp"`) so OAuth-capable clients can trigger browser consent automatically.

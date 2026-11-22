@@ -2,7 +2,7 @@
   "$schema": "https://antigravity.google/schemas/v1/plugin.json",
   "name": "scalix-cloud",
   "displayName": "Scalix Cloud",
-  "version": "1.6.1",
+  "version": "1.6.2",
   "description": "Operate Scalix Cloud — 53 platform tools over one remote MCP endpoint: PostgreSQL, AI inference, serverless functions, Linux machines, object storage, KV, DNS.",
   "logo": "assets/logo.svg",
   "suggestedPrompts": [
